@@ -14,37 +14,43 @@ def train(args):
     seed_list = copy.deepcopy(args['seed'])
     device = copy.deepcopy(args['device'])
 
-    for seed in seed_list:
+    for seed in seed_list: # seed is for dataloader, affect only if shuffle param = True
         args['seed'] = seed
         args['device'] = device
         _train(args)
 
-    myseed = 42069  # set a random seed for reproducibility
-    torch.backends.cudnn.deterministic = True
-    torch.manual_seed(myseed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(myseed)
+    # myseed = 42069  # set a random seed for reproducibility # seems not affect the training
+    # torch.backends.cudnn.deterministic = True
+    # torch.manual_seed(myseed)
+    # if torch.cuda.is_available():
+    #     torch.cuda.manual_seed_all(myseed)
 
 
 def _train(args):
-    logfilename = 'logs/{}_{}_{}_{}_{}_{}_{}_'.format(args['prefix'], args['seed'], args['model_name'], args['net_type'],
+    logfilename = 'logs/logging/{}_{}_{}_{}_{}_{}_{}_'.format(args['prefix'], args['seed'], args['model_name'], args['net_type'],
                                                 args['dataset'], args['init_cls'], args['increment'])+ time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
+    os.makedirs(logfilename)
+    print(logfilename)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(filename)s] => %(message)s',
         handlers=[
-            logging.FileHandler(filename=logfilename + '.log'),
+            logging.FileHandler(filename=logfilename + '/info.log'),
             logging.StreamHandler(sys.stdout)
         ]
     )
-    os.makedirs(logfilename)
-    print(logfilename)
+    logging.info("CUDA is available") if torch.cuda.is_available() else None
+
     _set_random()
     _set_device(args)
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'], args)
     args['class_order'] = data_manager._class_order
     model = factory.get_model(args['model_name'], args)
+
+    ## loading checkpoints
+    # checkpoint = torch.load('logs/reproduce_1993_sprompts_slip_cddb_2_2_2023-10-26-15:50:47/task_4.tar')
+    # model._network.load_state_dict(checkpoint['model_state_dict'])
 
     cnn_curve, nme_curve = {'top1': []}, {'top1': []}
     for task in range(data_manager.nb_tasks):
@@ -66,7 +72,8 @@ def _train(args):
             cnn_curve['top1'].append(cnn_accy['top1'])
             logging.info('CNN top1 curve: {}'.format(cnn_curve['top1']))
 
-        torch.save(model, os.path.join(logfilename, "task_{}.pth".format(int(task))))
+        #torch.save(model, os.path.join(logfilename, "task_{}.pth".format(int(task))))
+        model.save_checkpoint(os.path.join(logfilename, "task"))
 
 def _set_device(args):
     device_type = args['device']

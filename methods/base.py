@@ -59,8 +59,9 @@ class BaseLearner(object):
         save_dict = {
             'tasks': self._cur_task,
             'model_state_dict': self._network.state_dict(),
+            'all_keys': self.all_keys
         }
-        torch.save(save_dict, '{}_{}.pkl'.format(filename, self._cur_task))
+        torch.save(save_dict, '{}_{}.tar'.format(filename, self._cur_task))
 
     def after_task(self):
         pass
@@ -76,8 +77,8 @@ class BaseLearner(object):
         return ret
 
     def eval_task(self):
-        y_pred, y_true = self._eval_cnn(self.test_loader)
-        cnn_accy = self._evaluate(y_pred, y_true)
+        y_pred, y_true = self._eval_cnn(self.test_loader) # call sprompt.py line 159
+        cnn_accy = self._evaluate(y_pred, y_true) # call sprompt.py line 152
 
         if hasattr(self, '_class_means'):
             y_pred, y_true = self._eval_nme(self.test_loader, self._class_means)
@@ -112,7 +113,7 @@ class BaseLearner(object):
 
         return np.around(tensor2numpy(correct)*100 / total, decimals=2)
 
-    def _eval_cnn(self, loader):
+    def _eval_cnn(self, loader): # it is NOT called, it is called the def _eval_cnn() in the sprompt.py
         self._network.eval()
         y_pred, y_true = [], []
         for _, (_, inputs, targets) in enumerate(loader):
