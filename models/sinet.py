@@ -66,7 +66,7 @@ class SiNet(nn.Module):
     def __init__(self, args):
         super(SiNet, self).__init__()
 
-        model_kwargs = dict(patch_size=16, embed_dim=768, depth=12, num_heads=12)
+        model_kwargs = dict(embed_dim=768, depth=12, num_heads=12) # patch_size=16 is already declared in model's name vit_base_patch16_224
         self.image_encoder =_create_vision_transformer('vit_base_patch16_224', pretrained=True, **model_kwargs)
 
         self.class_num = 1
