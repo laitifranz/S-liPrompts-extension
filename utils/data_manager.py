@@ -175,7 +175,7 @@ class DummyDataset(Dataset):
     def __len__(self):
         return len(self.images)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx): # until here no images are loaded, smartway to save memory
         if self.use_path:
             image = self.trsf(pil_loader(self.images[idx]))
         else:
@@ -212,28 +212,27 @@ def pil_loader(path):
         return img.convert('RGB')
 
 
-def accimage_loader(path):
-    '''
-    Ref:
-    https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
-    accimage is an accelerated Image loader and preprocessor leveraging Intel IPP.
-    accimage is available on conda-forge.
-    '''
-    import accimage
-    try:
-        return accimage.Image(path)
-    except IOError:
-        # Potentially a decoding problem, fall back to PIL.Image
-        return pil_loader(path)
+# def accimage_loader(path):
+#     '''
+#     Ref:
+#     https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
+#     accimage is an accelerated Image loader and preprocessor leveraging Intel IPP.
+#     accimage is available on conda-forge.
+#     '''
+#     import accimage
+#     try:
+#         return accimage.Image(path)
+#     except IOError:
+#         # Potentially a decoding problem, fall back to PIL.Image
+#         return pil_loader(path)
 
-
-def default_loader(path):
-    '''
-    Ref:
-    https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
-    '''
-    from torchvision import get_image_backend
-    if get_image_backend() == 'accimage':
-        return accimage_loader(path)
-    else:
-        return pil_loader(path)
+# def default_loader(path):
+#     '''
+#     Ref:
+#     https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
+#     '''
+#     from torchvision import get_image_backend
+#     if get_image_backend() == 'accimage':
+#         return accimage_loader(path)
+#     else:
+#         return pil_loader(path)
