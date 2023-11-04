@@ -1,5 +1,13 @@
 # S-Prompts Learning with Pre-trained Transformers: An Occam’s Razor for Domain Incremental Learning
 
+## Improvement made by me:
+- Add pip requirements.txt without using conda
+- Add eval directly in this repo without relying on the addition repo (bugged)
+- Fix bugs related to one GPU usage
+- Fix bugs related to args of ML/DL frameworks
+- Save model as state_dict instead of the full model
+- Clean code and fix problems
+
 <div align="justify">
   This is the official implementation of our NeurIPS 2022 paper "S-Prompts Learning with Pre-trained Transformers: An Occam’s Razor for Domain Incremental Learning".
 In this paper, we propose one simple paradigm (named as S-Prompting) and two concrete approaches. The best of the proposed approaches achieves a remarkable relative improvement (an average of about 30%) over the best of the state-of-the-art exemplar-free methods for three standard Domain Incremental Learning (DIL) tasks.
