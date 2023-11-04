@@ -74,16 +74,16 @@ class PromptLearner(nn.Module):
         else:
             # random initialization
             if cfg.CSC:
-                print("Initializing class-specific contexts")
+                #print("Initializing class-specific contexts")
                 ctx_vectors = torch.empty(n_cls, n_ctx, ctx_dim, dtype=dtype)
             else:
-                print("Initializing a generic context")
+                #print("Initializing a generic context")
                 ctx_vectors = torch.empty(n_ctx, ctx_dim, dtype=dtype)
             nn.init.normal_(ctx_vectors, std=0.02)
             prompt_prefix = " ".join(["X"] * n_ctx)
 
-        print(f'Initial context: "{prompt_prefix}"')
-        print(f"Number of context words (tokens): {n_ctx}")
+        #print(f'Initial context: "{prompt_prefix}"')
+        #print(f"Number of context words (tokens): {n_ctx}")
         device = clip_model.token_embedding.weight.device
         self.ctx = nn.Parameter(ctx_vectors).to(device)  # to be optimized
 
