@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -140,7 +141,10 @@ model.eval()
 
 print(f"--- Task {checkpoint['tasks']} model loaded ---")
 
+
 device = "cuda:0"
+if not torch.cuda.is_available():
+    device = "cpu"
 model = model.to(device)
 test_dataset = DummyDataset(args["dataroot"], args["datatype"])
 test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=int(os.environ['SLURM_CPUS_ON_NODE']))
@@ -159,7 +163,7 @@ neigh.fit(X, Y)
 selectionsss = []
 
 y_pred, y_true = [], []
-for _, (path, inputs, targets) in enumerate(test_loader):
+for _, (path, inputs, targets) in tqdm(enumerate(test_loader), total=len(test_loader)):
     inputs = inputs.to(device)
     targets = targets.to(device)
 
