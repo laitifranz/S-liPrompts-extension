@@ -42,9 +42,10 @@ class DummyDataset(Dataset):
         images = []
         labels = []
         if data_type == "deepfake":
-            subsets = ["deepfake", "glow", "stargan_gf"] 
-            # CDDB Hard -> ["gaugan", "biggan", "wild", "whichfaceisreal", "san"]
-            multiclass = [0,1,1] #[0,0,0,0,0]
+            subsets = ["deepfake", "glow", "stargan_gf"] # <- OOD experiments
+            multiclass = [0,1,1]
+            #subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
+            #multiclass = [0,0,0,0,0]
             print(f'--- Test on {subsets} ---')
             for id, name in enumerate(subsets):
                 root_ = os.path.join(data_path, name, 'val')
