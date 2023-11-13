@@ -113,7 +113,7 @@ class SPrompts(BaseLearner):
                 targets = torch.index_select(targets, 0, mask)-self._known_classes
 
                 logits = self._network(inputs)['logits']
-                loss = F.cross_entropy(logits, targets)
+                loss = F.cross_entropy(logits, targets, label_smoothing=0.1)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
