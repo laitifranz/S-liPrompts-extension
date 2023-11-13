@@ -102,6 +102,8 @@ class SPrompts(BaseLearner):
 
     def train_function(self, train_loader, test_loader, optimizer, scheduler):
         prog_bar = tqdm(range(self.run_epoch))
+        use_amp = False
+        scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
         for _, epoch in enumerate(prog_bar):
             self._network.eval()
             losses = 0.
@@ -112,13 +114,18 @@ class SPrompts(BaseLearner):
                 inputs = torch.index_select(inputs, 0, mask)
                 targets = torch.index_select(targets, 0, mask)-self._known_classes
 
-                logits = self._network(inputs)['logits']
-                loss = F.cross_entropy(logits, targets)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                losses += loss.item()
+                with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=use_amp):
+                    logits = self._network(inputs)['logits']
+                    loss = F.cross_entropy(logits, targets)
 
+                scaler.scale(loss).backward()
+                #loss.backward()
+                scaler.step(optimizer)
+                #optimizer.step()
+                scaler.update()
+                optimizer.zero_grad()
+
+                losses += loss.item()
                 _, preds = torch.max(logits, dim=1)
                 correct += preds.eq(targets.expand_as(preds)).cpu().sum()
                 total += len(targets)
