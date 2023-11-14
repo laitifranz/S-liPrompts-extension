@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 from tqdm import tqdm
+import io
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -31,7 +32,7 @@ def load_json(settings_path):
 
 class DummyDataset(Dataset):
     def __init__(self, data_path, data_type):
-
+        self.do_compress = [True, 10] # enable/disable compress - jpeg quality
         self.trsf = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
@@ -42,10 +43,10 @@ class DummyDataset(Dataset):
         images = []
         labels = []
         if data_type == "deepfake":
-            subsets = ["deepfake", "glow", "stargan_gf"] # <- OOD experiments
-            multiclass = [0,1,1]
-            #subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
-            #multiclass = [0,0,0,0,0]
+            # subsets = ["deepfake", "glow", "stargan_gf"] # <- OOD experiments
+            # multiclass = [0,1,1]
+            subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
+            multiclass = [0,0,0,0,0]
             print(f'--- Test on {subsets} ---')
             for id, name in enumerate(subsets):
                 root_ = os.path.join(data_path, name, 'val')
@@ -87,14 +88,23 @@ class DummyDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.trsf(self.pil_loader(self.images[idx]))
+        image = self.trsf(self.pil_loader(self.images[idx], self.do_compress[0], self.do_compress[1]))
         label = self.labels[idx]
         return idx, image, label
 
-    def pil_loader(self, path):
+    def pil_loader(self, path, do_compress, quality):
         with open(path, 'rb') as f:
+            if do_compress:
+                f = self.compress_image_to_memory(path, quality=quality)
             img = Image.open(f)
             return img.convert('RGB')
+    
+    def compress_image_to_memory(self, path, quality):
+        with Image.open(path) as img:
+            output = io.BytesIO()
+            img.save(output, "JPEG", quality=quality)
+            output.seek(0)
+            return output
 
 def accuracy_domain(y_pred, y_true, increment=10):
     assert len(y_pred) == len(y_true), 'Data length error.'
