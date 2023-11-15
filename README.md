@@ -32,10 +32,6 @@ We hope the proposed S-Prompting becomes an Occam’s Razor (i.e., a simple and 
 
 
 
-![SPrompts.png](SPrompts.png)
-
-
-
 ## Enviroment setup
 Create the virtual environment for S-Prompts.
 ```python
@@ -134,39 +130,7 @@ python main.py --config configs/domainnet_slip.json
 ```
 
 
-## Evaluation:
-
-Please refer to 
-[[Evaluation Code]](https://github.com/iamwangyabin/SPrompts_eval).
-
-
-## Results
-
-![results1.png](results1.png)
-![results2.png](results2.png)
-![results3.png](results3.png)
 
 ## License
 
 Please check the MIT  [license](./LICENSE) that is listed in this repository.
-
-## Acknowledgments
-
-We thank the following repos providing helpful components/functions in our work.
-
-- [PyCIL](https://github.com/G-U-N/PyCIL)
-- [L2P](https://github.com/google-research/l2p)
-- [CLIP](https://github.com/openai/CLIP)
-- [CoOp](https://github.com/KaiyangZhou/CoOp)
-
-## Citation
-
-If you use any content of this repo for your work, please cite the following bib entry:
-```
-@inproceedings{wang2022sprompt,
-  title={S-Prompts Learning with Pre-trained Transformers: An Occam's Razor for Domain Incremental Learning},
-  author={Wang, Yabin and Huang, Zhiwu and Hong, Xiaopeng},
-  booktitle={Conference on Neural Information Processing Systems (NeurIPS)},
-  year={2022}
-}
-```
