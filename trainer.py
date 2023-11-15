@@ -16,14 +16,9 @@ def train(args):
 
     for seed in seed_list: # seed is for dataloader, affect only if shuffle param = True
         args['seed'] = seed
+        args['torch_seed'] = 2 #0 #42069
         args['device'] = device
         _train(args)
-
-    # myseed = 42069  # set a random seed for reproducibility # seems not affect the training
-    # torch.backends.cudnn.deterministic = True
-    # torch.manual_seed(myseed)
-    # if torch.cuda.is_available():
-    #     torch.cuda.manual_seed_all(myseed)
 
 
 def _train(args):
@@ -41,7 +36,7 @@ def _train(args):
     )
     logging.info("CUDA is available") if torch.cuda.is_available() else None
 
-    _set_random()
+    _set_random(args)
     _set_device(args)
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'], args)
@@ -90,10 +85,10 @@ def _set_device(args):
     args['device'] = gpus
 
 
-def _set_random():
-    torch.manual_seed(1)
-    torch.cuda.manual_seed(1)
-    torch.cuda.manual_seed_all(1)
+def _set_random(args):
+    torch.manual_seed(args['torch_seed'])
+    torch.cuda.manual_seed(args['torch_seed'])
+    torch.cuda.manual_seed_all(args['torch_seed'])
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
