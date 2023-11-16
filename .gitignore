@@ -2,10 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 
 *.pth
-run/
 logs/
 debug/
-launchers/
 configs/commented_cddb_slip.json
 
 ### Python ###
