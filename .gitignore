@@ -5,6 +5,7 @@
 logs/
 debug/
 configs/commented_cddb_slip.json
+launchers/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

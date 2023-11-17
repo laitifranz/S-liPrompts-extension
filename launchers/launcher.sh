@@ -3,7 +3,7 @@
 
 ############################################
 # Parameters. Reference https://slurm.schedmd.com/sbatch.html
-RUN_NAME="seed_2_labelsmooth_0_1_patience_5"
+RUN_NAME="seed_2_labelsmooth_0_1_patience_10"
 SCRIPT_TO_RUN="train.sh"
 
 GPUS_PER_NODE=1
