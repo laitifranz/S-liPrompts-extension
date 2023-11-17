@@ -27,6 +27,8 @@ class BaseLearner(object):
         self._device = args['device'][0]
         self._multiple_gpus = args['device']
 
+        self._filename = args['filename']
+
     @property
     def exemplar_size(self):
         assert len(self._data_memory) == len(self._targets_memory), 'Exemplar size error.'
@@ -54,14 +56,14 @@ class BaseLearner(object):
             self._reduce_exemplar(data_manager, per_class)
             self._construct_exemplar(data_manager, per_class)
 
-    def save_checkpoint(self, filename):
+    def save_checkpoint(self):
         self._network.cpu()
         save_dict = {
             'tasks': self._cur_task,
             'model_state_dict': self._network.state_dict(),
             'all_keys': self.all_keys
         }
-        torch.save(save_dict, '{}_{}.tar'.format(filename, self._cur_task))
+        torch.save(save_dict, '{}_{}.tar'.format(self._filename, self._cur_task))
 
     def after_task(self):
         pass

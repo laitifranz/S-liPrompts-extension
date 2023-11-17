@@ -14,7 +14,7 @@ def train(args):
     seed_list = copy.deepcopy(args['seed'])
     device = copy.deepcopy(args['device'])
 
-    for seed in seed_list: # seed is for dataloader, affect only if shuffle param = True
+    for seed in seed_list: # seed is for dataloader, applied only if shuffle param = True
         args['seed'] = seed
         args['torch_seed'] = 2 #0 #42069
         args['device'] = device
@@ -22,7 +22,7 @@ def train(args):
 
 
 def _train(args):
-    logfilename = 'logs/logging/{}_{}_{}_{}_{}_{}_{}_'.format(args['prefix'], args['seed'], args['model_name'], args['net_type'],
+    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}_'.format(os.environ['SLURM_JOB_NAME'], args['prefix'], args['seed'], args['model_name'], args['net_type'],
                                                 args['dataset'], args['init_cls'], args['increment'])+ time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
     os.makedirs(logfilename)
     print(logfilename)
@@ -41,6 +41,7 @@ def _train(args):
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'], args)
     args['class_order'] = data_manager._class_order
+    args['filename'] = os.path.join(logfilename, "task")
     model = factory.get_model(args['model_name'], args)
 
     ## loading checkpoints
@@ -68,7 +69,7 @@ def _train(args):
             logging.info('CNN top1 curve: {}'.format(cnn_curve['top1']))
 
         #torch.save(model, os.path.join(logfilename, "task_{}.pth".format(int(task))))
-        model.save_checkpoint(os.path.join(logfilename, "task"))
+        model.save_checkpoint()
 
 def _set_device(args):
     device_type = args['device']
