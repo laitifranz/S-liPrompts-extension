@@ -40,6 +40,8 @@ class SPrompts(BaseLearner):
         self.batch_size = args["batch_size"]
         self.weight_decay = args["weight_decay"]
         self.num_workers = int(os.environ['SLURM_CPUS_ON_NODE']) #args["num_workers"]
+        self.label_smoothing = args["label_smoothing"]
+        self.patience = args["patience"] # if set to null, does not activate early stopping
 
         self.topk = 2  # origin is 5
         self.class_num = self._network.class_num
@@ -101,6 +103,8 @@ class SPrompts(BaseLearner):
 
 
     def train_function(self, train_loader, test_loader, optimizer, scheduler):
+        if self.patience is not None:
+            early_stopper = EarlyStopping(patience=self.patience, verbose=False)
         prog_bar = tqdm(range(self.run_epoch))
         for _, epoch in enumerate(prog_bar):
             self._network.eval()
@@ -113,7 +117,7 @@ class SPrompts(BaseLearner):
                 targets = torch.index_select(targets, 0, mask)-self._known_classes
 
                 logits = self._network(inputs)['logits']
-                loss = F.cross_entropy(logits, targets, label_smoothing=0.1)
+                loss = F.cross_entropy(logits, targets, label_smoothing=self.label_smoothing)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -130,6 +134,12 @@ class SPrompts(BaseLearner):
             info = 'Task {}, Epoch {}/{} => Loss {:.3f}, Train_accy {:.2f}, Test_accy {:.2f}'.format(
                 self._cur_task, epoch + 1, self.run_epoch, losses / len(train_loader), train_acc, test_acc)
             prog_bar.set_description(info)
+
+            if self.patience is not None:
+                early_stopper(test_acc, epoch)
+                if early_stopper.early_stop:
+                    logging.info(f"Early stopping triggered at epoch {epoch+1} over {prog_bar}")
+                    break
 
         logging.info(info)
 
@@ -195,3 +205,29 @@ class SPrompts(BaseLearner):
             total += len(targets)
 
         return np.around(tensor2numpy(correct) * 100 / total, decimals=2)
+
+class EarlyStopping:
+    def __init__(self, patience=5, verbose=False):
+        self.patience = patience
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.best_epoch = 0
+
+    def __call__(self, test_acc, epoch):
+        score = test_acc
+
+        if self.best_score is None:
+            self.best_score = score
+            self.best_epoch = epoch
+        elif score <= self.best_score:
+            self.counter += 1
+            if self.verbose:
+                print(f"EarlyStopping counter: {self.counter} out of {self.patience}")
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.best_epoch = epoch
+            self.counter = 0

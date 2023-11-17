@@ -30,5 +30,7 @@
     "lrate_decay" : 0.1,
     "batch_size" : 32,
     "weight_decay" : 2e-4,
-    "num_workers" : 12
+    "num_workers" : 12,
+    "label_smoothing" : 0.1,
+    "patience" : 10
 }
