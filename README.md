@@ -7,6 +7,9 @@
 - Fix bugs related to args of ML/DL frameworks
 - Save model as state_dict instead of the full model
 - Clean code and fix problems
+- Introduction of Early stopping option
+- Move config parameters in the JSON file
+- Tested on PyTorch 2.1.0
 
 <div align="justify">
   This is the official implementation of our NeurIPS 2022 paper "S-Prompts Learning with Pre-trained Transformers: An Occam’s Razor for Domain Incremental Learning".

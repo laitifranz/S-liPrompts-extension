@@ -49,7 +49,7 @@ class SPrompts(BaseLearner):
         self.all_keys = []
 
     def after_task(self):
-        self._old_network = self._network.copy().freeze()
+        # self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
         logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
@@ -74,7 +74,7 @@ class SPrompts(BaseLearner):
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
-        # if self._old_network is not None: # why put it on the device?
+        # if self._old_network is not None: #? why put it on the device?
         #     self._old_network.to(self._device)
 
         for name, param in self._network.named_parameters():

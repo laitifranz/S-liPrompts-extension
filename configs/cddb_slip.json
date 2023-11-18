@@ -18,6 +18,7 @@
     "prompt_length" : 10,
     "device": ["0"],
     "seed": [1993],
+    "torch_seed" : 2,
     "EPSILON" : 1e-8,
     "init_epoch" : 20,
     "init_lr" : 0.001,
@@ -28,9 +29,9 @@
     "lrate" : 0.01,
     "milestones" : [20, 30],
     "lrate_decay" : 0.1,
-    "batch_size" : 32,
+    "batch_size" : 64,
     "weight_decay" : 2e-4,
     "num_workers" : 12,
     "label_smoothing" : 0.1,
-    "patience" : 10
+    "patience" : null
 }

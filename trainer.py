@@ -16,7 +16,6 @@ def train(args):
 
     for seed in seed_list: # seed is for dataloader, applied only if shuffle param = True
         args['seed'] = seed
-        args['torch_seed'] = 2 #0 #42069
         args['device'] = device
         _train(args)
 
@@ -43,10 +42,6 @@ def _train(args):
     args['class_order'] = data_manager._class_order
     args['filename'] = os.path.join(logfilename, "task")
     model = factory.get_model(args['model_name'], args)
-
-    ## loading checkpoints
-    # checkpoint = torch.load('logs/reproduce_1993_sprompts_slip_cddb_2_2_2023-10-26-15:50:47/task_4.tar')
-    # model._network.load_state_dict(checkpoint['model_state_dict'])
 
     cnn_curve, nme_curve = {'top1': []}, {'top1': []}
     for task in range(data_manager.nb_tasks):
