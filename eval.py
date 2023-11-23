@@ -17,7 +17,9 @@ from utils.datautils.core50data import CORE50
 
 def setup_parser():
     parser = argparse.ArgumentParser(description='Reproduce of multiple continual learning algorithms.')
+    parser.add_argument('--scenario', type=str, default='cddb_hard', help='scenario to test')
     parser.add_argument('--resume', type=str, default='', help='resume model')
+    parser.add_argument('--compression', type=bool, default=False, help='test on compressed data')
     parser.add_argument('--config', type=str, default='configs/cddb_slip.json', help='Json file of settings.')
     parser.add_argument('--dataroot', type=str, default='/home/francesco.laiti/datasets/CDDB/', help='data path')
     parser.add_argument('--datatype', type=str, default='deepfake', help='data type')
@@ -31,8 +33,8 @@ def load_json(settings_path):
     return param
 
 class DummyDataset(Dataset):
-    def __init__(self, data_path, data_type):
-        self.do_compress = [True, 10] # enable/disable compress - jpeg quality
+    def __init__(self, data_path, data_type, data_scenario, data_compression):
+        self.do_compress = [data_compression, 50] # enable/disable compression from flag - jpeg quality
         self.trsf = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
@@ -42,12 +44,17 @@ class DummyDataset(Dataset):
 
         images = []
         labels = []
+        print(f'--- Data compression enabled: {data_compression} ---')
         if data_type == "deepfake":
-            # subsets = ["deepfake", "glow", "stargan_gf"] # <- OOD experiments
-            # multiclass = [0,1,1]
-            subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
-            multiclass = [0,0,0,0,0]
-            print(f'--- Test on {subsets} ---')
+            if data_scenario == "cddb_hard":
+                subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
+                multiclass = [0,0,0,0,0]
+            elif data_scenario == "ood":
+                subsets = ["deepfake", "glow", "stargan_gf"] # <- OOD experiments
+                multiclass = [0,1,1]
+            else:
+                raise RuntimeError(f"Unexpected data_scenario value: {data_scenario}. Expected 'cddb_hard' or 'ood'.")
+            print(f'--- Test on {subsets} with {data_scenario} scenario ---')
             for id, name in enumerate(subsets):
                 root_ = os.path.join(data_path, name, 'val')
                 # sub_classes = ['']
@@ -157,7 +164,7 @@ device = "cuda:0"
 if not torch.cuda.is_available():
     device = "cpu"
 model = model.to(device)
-test_dataset = DummyDataset(args["dataroot"], args["datatype"])
+test_dataset = DummyDataset(args["dataroot"], args["datatype"], args["scenario"], args["compression"])
 test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=int(os.environ['SLURM_CPUS_ON_NODE']))
 
 X,Y = [], []
@@ -190,7 +197,7 @@ for _, (path, inputs, targets) in tqdm(enumerate(test_loader), total=len(test_lo
 
         selectionsss.extend(selection)
 
-        selection = torch.tensor(selection) #! in the original code they multiply for 0, I don't know why
+        selection = torch.tensor(selection) #! in the original code they multiply for 0
 
         outputs = model.interface(inputs, selection)
     predicts = torch.topk(outputs, k=2, dim=1, largest=True, sorted=True)[1]
