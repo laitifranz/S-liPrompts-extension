@@ -40,7 +40,3 @@ model_1 = torch.load('logs/logging/reproduce_1993_sprompts_slip_cddb_2_2_2023-10
 model_2 = torch.load('logs/logging/reproduce_1993_sprompts_slip_cddb_2_2_2023-10-31-15:48:56/task_4.tar')
 
 validate_state_dicts(model_1['model_state_dict'], model_2['model_state_dict'])
-
-# [print(k_1 + '\n') for (k_1, v_1) in pretrained.state_dict().items()]
-# print('##')
-# [print(k_1 + '\n') for (k_1, v_1) in mymodel['model_state_dict'].items()]
