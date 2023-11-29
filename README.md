@@ -43,13 +43,16 @@ In this fork, I have made the following changes:
 - Added label smoothing option
 
 
-> Note: As the original project was split in two different repository, one for training and one for evaluation, I have decided not to pull request on the original repository but made a separate one.
+> Note: As the original project was split in two different repository, one for training and one for evaluation, I have decided not to pull request on the original repository but instead made a separated one.
 
 
 ## Environment setup
 Create the virtual environment for S-Prompts. Tested on Python 3.9 and NVIDIA GPU A30 with MIG partition 6 GB memory.
+
 ```
-python -m pip install -r requirements.txt
+python -m venv s-prompts-env
+source s-prompts-env/bin/activate
+pip install -r requirements.txt
 ```
 
 ## Dataset preparation
