@@ -39,8 +39,8 @@ In this fork, I have made the following changes:
 - Move config parameters in the JSON file
 - Reproduced major results of the paper by using torch_seed = 2 and label_smoothing = 0.1 with no patience
 - Tested on PyTorch 2.1.0 and CUDA 12.1
-- Added scenario (CDDB Hard or OOD) and compression option
-- Added label smoothing option
+- Add scenario (CDDB Hard or OOD) and compression option
+- Add label smoothing option
 
 
 > Note: As the original project was split in two different repository, one for training and one for evaluation, I have decided not to pull request on the original repository but instead made a separated one.
