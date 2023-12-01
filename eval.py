@@ -44,7 +44,7 @@ class DummyDataset(Dataset):
 
         images = []
         labels = []
-        print(f'--- Data compression enabled: {data_compression} ---')
+        print(f'--- Data compression enabled: {self.do_compress} ---')
         if data_type == "deepfake":
             if data_scenario == "cddb_hard":
                 subsets = ["gaugan", "biggan", "wild", "whichfaceisreal", "san"] # <- CDDB Hard
