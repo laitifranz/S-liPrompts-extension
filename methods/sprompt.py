@@ -39,7 +39,7 @@ class SPrompts(BaseLearner):
         self.lrate_decay = args["lrate_decay"]
         self.batch_size = args["batch_size"]
         self.weight_decay = args["weight_decay"]
-        self.num_workers = int(os.environ['SLURM_CPUS_ON_NODE']) #args["num_workers"]
+        self.num_workers = int(os.environ.get('SLURM_CPUS_ON_NODE', args['num_workers']))
         self.label_smoothing = args["label_smoothing"]
         self.patience = args["patience"] # if set to null, does not activate early stopping
 
@@ -74,7 +74,7 @@ class SPrompts(BaseLearner):
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
-        # if self._old_network is not None: #? why put it on the device?
+        # if self._old_network is not None:
         #     self._old_network.to(self._device)
 
         for name, param in self._network.named_parameters():

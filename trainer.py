@@ -21,7 +21,7 @@ def train(args):
 
 
 def _train(args):
-    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}_'.format(os.environ['SLURM_JOB_NAME'], args['prefix'], args['seed'], args['model_name'], args['net_type'],
+    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}_'.format(os.environ.get('SLURM_JOB_NAME', 'default_name'), args['prefix'], args['seed'], args['model_name'], args['net_type'],
                                                 args['dataset'], args['init_cls'], args['increment'])+ time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
     os.makedirs(logfilename)
     print(logfilename)

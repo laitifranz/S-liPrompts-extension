@@ -165,7 +165,7 @@ if not torch.cuda.is_available():
     device = "cpu"
 model = model.to(device)
 test_dataset = DummyDataset(args["dataroot"], args["datatype"], args["scenario"], args["compression"])
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=int(os.environ['SLURM_CPUS_ON_NODE']))
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=int(os.environ.get('SLURM_CPUS_ON_NODE', args['num_workers'])))
 
 X,Y = [], []
 
@@ -191,9 +191,9 @@ for _, (path, inputs, targets) in tqdm(enumerate(test_loader), total=len(test_lo
         if args["random_select"]:
             selection = np.random.randint(0, Y.max(), selection.shape)
         if args["til"]:
-            selection = (targets/345).cpu().long().numpy()
+            # selection = (targets/345).cpu().long().numpy()
             # selection = (targets/50).cpu().long().numpy()
-            # selection = (targets/2).cpu().long().numpy()
+            selection = (targets/2).cpu().long().numpy()
 
         selectionsss.extend(selection)
 
