@@ -1,5 +1,5 @@
 <div align="center">
-  <h1 align="center">:alembic: S-Prompts Learning with Pre-trained Transformers: Extended Implementation</h1>
+  <h1 align="center">:alembic: S-Prompts Learning with Pre-trained Transformers: Extended Implementation for S-liPrompts</h1>
   <p align="center"> 
   </p>
 </div>
@@ -19,7 +19,7 @@
 </div>
 <br>
 
-This repository is a personal extension of the original project "S-Prompts Learning with Pre-trained Transformers: An Occam’s Razor for Domain Incremental Learning", originally presented at NeurIPS 2022. My version includes some minor fixes and enhancements to the original implementation.
+This repository is a personal extension of the original project "S-Prompts Learning with Pre-trained Transformers: An Occam’s Razor for Domain Incremental Learning", originally presented at NeurIPS 2022. My version includes some minor fixes and enhancements to the original implementation. **Only S-liPrompts (CLIP-based approach) was considered**. 
 
 ## Original Project
 
@@ -135,9 +135,26 @@ _Not tested, contribute!_
 _Not tested, contribute!_
 
 ## Evaluation
+
+### CDDB
+
+CDDB Hard scenario
 ```
-python eval.py --config configs/cddb_slip.json --resume <path to .tar checkpoint file>
+python eval.py --config configs/cddb_slip.json --resume <path to .tar checkpoint file> --dataroot <path to dataset folder>
 ```
+
+OOD scenario
+```
+python eval.py --config configs/cddb_slip.json --resume <path to .tar checkpoint file> --dataroot <path to dataset folder> --scenario ood
+```
+
+### CORe50
+
+_Not tested, contribute!_
+
+### DomainNet
+
+_Not tested, contribute!_
 
 ## License
 
